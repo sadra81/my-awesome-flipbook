@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turn.js Flipbook Template</title>
+    <!-- Link to jQuery library from LOCAL files (MUST BE LOADED FIRST) -->
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <!-- Link to Turn.js library from LOCAL files (MUST BE LOADED AFTER jQuery) -->
+    <script type="text/javascript" src="turn.min.js"></script>
+
+    <!-- Link to Turn.js plugins from LOCAL files -->
+    <!-- These should be loaded after turn.min.js -->
+    <script type="text/javascript" src="scissor.js"></script>
+    <script type="text/javascript" src="zoom.js"></script>
+
+    <!-- Link to your custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>My Awesome Flipbook (Powered by Turn.js)</h1>
+        <div class="flipbook-wrapper">
+            <!-- The magazine-viewport wraps the flipbook for zoom functionality -->
+            <div class="magazine-viewport">
+                <!-- The div where the flipbook will be initialized by JavaScript -->
+                <div id="flipbook">
+                    <!-- Pages will be dynamically added here by script.js or static HTML -->
+                    <div class="page cover-page">
+                        <h2>Welcome to My Flipbook!</h2>
+                        <p>This is the cover page.</p>
+                    </div>
+                    <div class="page">
+                        <h3>Page 1</h3>
+                        <p>This is the first page of your flipbook. Turn.js provides a very realistic page-turning animation.</p>
+                        <img src="https://placehold.co/300x200/ADD8E6/000000?text=Image+1" alt="Placeholder Image 1" class="page-image">
+                    </div>
+                    <div class="page">
+                        <h3>Page 2</h3>
+                        <p>You can add any HTML content here. Remember that Turn.js renders pages as images for the flip effect, so complex interactive elements might behave differently.</p>
+                        <p>Feel free to customize the CSS for the look and feel.</p>
+                    </div>
+                    <div class="page">
+                        <h3>Page 3</h3>
+                        <p>This page demonstrates that you can have varying amounts of content on each page. The flipbook will adjust.</p>
+                        <p>Keep content concise for optimal performance.</p>
+                    </div>
+                    <div class="page">
+                        <h3>Page 4</h3>
+                        <p>You can use JavaScript to dynamically load content into these page divs before initializing Turn.js.</p>
+                        <img src="https://placehold.co/300x200/90EE90/000000?text=Image+2" alt="Placeholder Image 2" class="page-image">
+                    </div>
+                    <div class="page">
+                        <h3>Page 5</h3>
+                        <p>This is the last content page. Enjoy building your custom flipbook!</p>
+                    </div>
+                    <div class="page back-cover-page">
+                        <h2>Thank You!</h2>
+                        <p>This is the back cover.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Navigation buttons removed as requested -->
+        </div>
+    </div>
+
+    <!-- Link to your custom JavaScript (moved to end of body) -->
+    <script src="script.js"></script>
+</body>
+</html>
