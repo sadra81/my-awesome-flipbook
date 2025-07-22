@@ -11,9 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- SCISSOR EFFECT REMOVED ---
-    // The line $('#flipbook .page').eq(3).scissor(); has been removed.
+    // The line that applied the scissor effect has been removed.
     // If you wish to re-enable it or apply it to a different page,
     // you can add it back here, targeting the desired page element.
+    // For example: $('#flipbook .page').eq(3).scissor();
     // -----------------------------
 
     // Initialize Turn.js on the flipbook element
