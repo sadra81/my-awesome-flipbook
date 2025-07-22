@@ -153,7 +153,6 @@ h1 {
     .magazine-viewport {
         width: 90vw; /* Use viewport width for more fluidity */
         height: calc(90vw / 1.6); /* Maintain aspect ratio */
-        max-height: 70vh; /* Prevent it from getting too tall on some tablets */
     }
 
     h1 {
@@ -175,7 +174,6 @@ h1 {
     .magazine-viewport {
         width: 95vw; /* Take up more width */
         height: calc(95vw / 1.6); /* Maintain aspect ratio */
-        max-height: 60vh; /* Adjust max height */
     }
 
     .page {
@@ -201,9 +199,9 @@ h1 {
     }
 
     .magazine-viewport {
-        width: 98vw; /* Almost full width */
-        height: calc(98vw / 1.6); /* Maintain aspect ratio */
-        max-height: 50vh; /* Adjust max height */
+        width: 95vw; /* Keep it almost full width */
+        height: calc(95vw / 1.6); /* Maintain aspect ratio */
+        min-height: 40vh; /* Ensure a minimum height on mobile */
     }
 
     .page {
