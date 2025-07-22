@@ -40,15 +40,19 @@ h1 {
     gap: 20px;
 }
 
-/* New: Styling for the magazine-viewport */
+/* Styling for the magazine-viewport */
 .magazine-viewport {
-    width: 800px; /* Should match flipbook width */
-    height: 500px; /* Should match flipbook height */
+    /* Base dimensions, will be adjusted by JS and media queries */
+    width: 800px;
+    height: 500px;
     position: relative;
     overflow: hidden; /* Crucial for zoom to work correctly */
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
     border-radius: 8px;
     background-color: #fdfdfd;
+    /* Ensure it doesn't get too wide on very large screens */
+    max-width: 90vw; /* Limit to 90% of viewport width */
+    max-height: 90vh; /* Limit to 90% of viewport height */
 }
 
 /* Turn.js container styling */
@@ -62,18 +66,17 @@ h1 {
 .page {
     background-color: #ffffff;
     border: 1px solid #e0e0e0;
-    padding: 20px;
+    padding: 20px; /* Base padding */
     display: flex;
     flex-direction: column;
     justify-content: flex-start; /* Align content to the top */
     align-items: center;
     text-align: center;
-    font-size: 1.1em;
+    font-size: 1.1em; /* Base font size */
     line-height: 1.6;
     color: #555;
     border-radius: 5px; /* Slightly rounded corners for pages */
     box-shadow: inset 0 0 5px rgba(0,0,0,0.05); /* Subtle inner shadow */
-    /* Turn.js manages page sizing internally, but these ensure content fits */
     width: 100%;
     height: 100%;
     overflow: hidden; /* Prevent content from spilling */
@@ -143,50 +146,77 @@ h1 {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-/* Responsive adjustments for Turn.js */
+/* Responsive adjustments */
+
+/* For screens smaller than 900px (e.g., large tablets in landscape) */
 @media (max-width: 900px) {
     .magazine-viewport {
-        width: 600px; /* Adjust for smaller screens */
-        height: 400px;
+        width: 90vw; /* Use viewport width for more fluidity */
+        height: calc(90vw / 1.6); /* Maintain aspect ratio */
+        max-height: 70vh; /* Prevent it from getting too tall on some tablets */
+    }
+
+    h1 {
+        font-size: 2.2em;
     }
 }
 
+/* For screens smaller than 768px (e.g., tablets in portrait, large phones) */
 @media (max-width: 768px) {
-    .magazine-viewport {
-        width: 100%; /* Make flipbook full width on smaller screens */
-        height: 350px; /* Adjust height */
-    }
-
     .container {
-        padding: 20px;
+        padding: 15px;
     }
 
     h1 {
         font-size: 2em;
+        margin-bottom: 20px;
     }
 
-    .nav-button {
-        padding: 10px 20px;
-        font-size: 1em;
+    .magazine-viewport {
+        width: 95vw; /* Take up more width */
+        height: calc(95vw / 1.6); /* Maintain aspect ratio */
+        max-height: 60vh; /* Adjust max height */
     }
 
     .page {
-        font-size: 1em;
         padding: 15px;
+        font-size: 1em;
+    }
+
+    .page h2, .page h3 {
+        font-size: 1.6em;
+        margin-bottom: 10px;
     }
 }
 
+/* For screens smaller than 480px (e.g., most mobile phones) */
 @media (max-width: 480px) {
-    .magazine-viewport {
-        height: 300px;
+    .container {
+        padding: 10px;
     }
 
     h1 {
-        font-size: 1.8em;
+        font-size: 1.6em;
+        margin-bottom: 15px;
     }
 
-    .nav-button {
-        padding: 8px 15px;
+    .magazine-viewport {
+        width: 98vw; /* Almost full width */
+        height: calc(98vw / 1.6); /* Maintain aspect ratio */
+        max-height: 50vh; /* Adjust max height */
+    }
+
+    .page {
+        padding: 10px;
         font-size: 0.9em;
+    }
+
+    .page h2, .page h3 {
+        font-size: 1.4em;
+        margin-bottom: 8px;
+    }
+
+    .cover-page, .back-cover-page {
+        font-size: 1.2em;
     }
 }
