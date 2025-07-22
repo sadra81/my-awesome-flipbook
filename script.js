@@ -10,20 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // --- NEW: Apply scissor effect to a specific page ---
-    // The scissor plugin divides a page into two, creating a visual cut.
-    // It's applied to the page element itself before Turn.js initializes.
-    // For example, let's apply it to the third page (index 2, as pages are 0-indexed in jQuery selection).
-    // In your index.html, Page 3 is the 4th div with class 'page' (after cover, page1, page2).
-    // So, it's the 4th child of #flipbook, or index 3 if using .page selector.
-    // Let's target the page with "Page 3" content.
-    // Assuming the structure: cover, page1, page2, page3, page4, page5, back-cover
-    // Page 3 is the 4th .page div, so it's at index 3 in a jQuery collection of .page.
-    $('#flipbook .page').eq(3).scissor(); // Applies scissor to the 4th page div (which contains "Page 3" content)
-    // You can apply this to any page you wish to "cut".
-    // Note: The scissor effect visually splits the content. The second half of the content
-    // will appear on the subsequent physical turn of the page.
-    // ---------------------------------------------------
+    // --- SCISSOR EFFECT REMOVED ---
+    // The line $('#flipbook .page').eq(3).scissor(); has been removed.
+    // If you wish to re-enable it or apply it to a different page,
+    // you can add it back here, targeting the desired page element.
+    // -----------------------------
 
     // Initialize Turn.js on the flipbook element
     $(flipbookElement).turn({
@@ -57,26 +48,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle window resize to make the flipbook responsive
     $(window).bind('resize', function(){
+        // Get the parent container's width
         var containerWidth = magazineViewport.parent().width();
         var newWidth = containerWidth;
-        var newHeight = containerWidth / 1.6;
+        var newHeight = containerWidth / 1.6; // Assuming 800x500 aspect ratio (1.6)
 
-        if (newHeight > 500) {
+        // Ensure it doesn't exceed a maximum height if desired
+        if (newHeight > 500) { // Max height for book
             newHeight = 500;
             newWidth = newHeight * 1.6;
         }
 
-        if (newWidth < 300) {
+        // Ensure it doesn't go below min width/height
+        if (newWidth < 300) { // Min width for book
             newWidth = 300;
             newHeight = newWidth / 1.6;
         }
 
+        // Resize the viewport and then the flipbook
         magazineViewport.css({
             width: newWidth,
             height: newHeight
         });
         $(flipbookElement).turn('size', newWidth, newHeight);
 
+        // If zoomed in, re-adjust zoom to new size
         if (magazineViewport.zoom('value') > 1) {
             magazineViewport.zoom('resize');
         }
