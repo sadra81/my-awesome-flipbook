@@ -19,91 +19,100 @@ $(document).ready(function() {
     let tempOriginalParent = null;
     let tempOriginalNextSibling = null;
 
+    // Define the event handler functions outside to allow removal and re-attachment
+    function toggleFullscreenHandler() {
+        if (!map) {
+            console.warn("Map not initialized. Cannot toggle fullscreen.");
+            return;
+        }
+
+        if (!mapContainer.classList.contains('fullscreen')) {
+            // Store the current parent and next sibling *before* moving the mapContainer
+            tempOriginalParent = mapContainer.parentNode;
+            tempOriginalNextSibling = mapContainer.nextSibling;
+
+            // Store original styles (these can be stringified as they are primitive values)
+            const currentStyles = window.getComputedStyle(mapContainer);
+            mapContainer.dataset.originalInlineStyles = JSON.stringify({
+                width: mapContainer.style.width,
+                height: mapContainer.style.height,
+                position: currentStyles.position, // Use computed style for robustness
+                top: currentStyles.top,
+                left: currentStyles.left,
+                margin: currentStyles.margin,
+                display: currentStyles.display,
+                justifyContent: currentStyles.justifyContent,
+                alignItems: currentStyles.alignItems,
+                transform: currentStyles.transform,
+                zIndex: currentStyles.zIndex
+            });
+
+            // Apply fullscreen styles
+            mapModalOverlay.appendChild(mapContainer);
+            mapContainer.classList.add('fullscreen');
+            mapModalOverlay.classList.add('active');
+            toggleBtn.textContent = '✕ Exit Fullscreen';
+
+            mapContainer.style.width = '90%';
+            mapContainer.style.height = '90%';
+            mapContainer.style.position = 'fixed';
+            mapContainer.style.top = '50%';
+            mapContainer.style.left = '50%';
+            mapContainer.style.transform = 'translate(-50%, -50%)';
+            mapContainer.style.margin = '0';
+            mapContainer.style.display = 'flex';
+            mapContainer.style.justifyContent = 'center';
+            mapContainer.style.alignItems = 'center';
+            mapContainer.style.zIndex = '1001';
+
+            setTimeout(() => {
+                if (map) map.invalidateSize();
+            }, 300);
+        } else {
+            // Restore original state using the stored tempOriginalParent and tempOriginalNextSibling
+            if (tempOriginalParent) {
+                if (tempOriginalNextSibling) {
+                    tempOriginalParent.insertBefore(mapContainer, tempOriginalNextSibling);
+                } else {
+                    tempOriginalParent.appendChild(mapContainer);
+                }
+            } else {
+                // Fallback if original parent is somehow lost (shouldn't happen with this fix)
+                console.warn("Original parent not found, appending map to body as fallback.");
+                document.body.appendChild(mapContainer);
+            }
+
+            mapContainer.classList.remove('fullscreen');
+            mapModalOverlay.classList.remove('active');
+            toggleBtn.textContent = '⛶ Fullscreen';
+
+            // Restore all original inline styles
+            const originalInlineStyles = JSON.parse(mapContainer.dataset.originalInlineStyles || '{}');
+            Object.keys(originalInlineStyles).forEach(prop => {
+                mapContainer.style[prop] = originalInlineStyles[prop];
+            });
+
+            setTimeout(() => {
+                if (map) map.invalidateSize();
+            }, 300);
+        }
+    }
+
+    function escapeKeyHandler(e) {
+        if (e.key === 'Escape' && mapModalOverlay.classList.contains('active')) {
+            toggleBtn.click();
+        }
+    }
+
     function setupFullscreenButton() {
         if (toggleBtn && mapContainer && mapModalOverlay) {
-            toggleBtn.addEventListener('click', function() {
-                if (!map) {
-                    console.warn("Map not initialized. Cannot toggle fullscreen.");
-                    return;
-                }
+            // Remove existing listeners to prevent duplicates
+            toggleBtn.removeEventListener('click', toggleFullscreenHandler);
+            document.removeEventListener('keydown', escapeKeyHandler);
 
-                if (!mapContainer.classList.contains('fullscreen')) {
-                    // Store the current parent and next sibling *before* moving the mapContainer
-                    tempOriginalParent = mapContainer.parentNode;
-                    tempOriginalNextSibling = mapContainer.nextSibling;
-
-                    // Store original styles (these can be stringified as they are primitive values)
-                    const currentStyles = window.getComputedStyle(mapContainer);
-                    mapContainer.dataset.originalInlineStyles = JSON.stringify({
-                        width: mapContainer.style.width,
-                        height: mapContainer.style.height,
-                        position: mapContainer.style.position,
-                        top: mapContainer.style.top,
-                        left: mapContainer.style.left,
-                        margin: mapContainer.style.margin,
-                        display: mapContainer.style.display,
-                        justifyContent: mapContainer.style.justifyContent,
-                        alignItems: mapContainer.style.alignItems,
-                        transform: mapContainer.style.transform,
-                        zIndex: mapContainer.style.zIndex
-                    });
-
-                    // Apply fullscreen styles
-                    mapModalOverlay.appendChild(mapContainer);
-                    mapContainer.classList.add('fullscreen');
-                    mapModalOverlay.classList.add('active');
-                    toggleBtn.textContent = '✕ Exit Fullscreen';
-
-                    mapContainer.style.width = '90%';
-                    mapContainer.style.height = '90%';
-                    mapContainer.style.position = 'fixed';
-                    mapContainer.style.top = '50%';
-                    mapContainer.style.left = '50%';
-                    mapContainer.style.transform = 'translate(-50%, -50%)';
-                    mapContainer.style.margin = '0';
-                    mapContainer.style.display = 'flex';
-                    mapContainer.style.justifyContent = 'center';
-                    mapContainer.style.alignItems = 'center';
-                    mapContainer.style.zIndex = '1001';
-
-                    setTimeout(() => {
-                        if (map) map.invalidateSize();
-                    }, 300);
-                } else {
-                    // Restore original state using the stored tempOriginalParent and tempOriginalNextSibling
-                    if (tempOriginalParent) {
-                        if (tempOriginalNextSibling) {
-                            tempOriginalParent.insertBefore(mapContainer, tempOriginalNextSibling);
-                        } else {
-                            tempOriginalParent.appendChild(mapContainer);
-                        }
-                    } else {
-                        // Fallback if original parent is somehow lost (shouldn't happen with this fix)
-                        console.warn("Original parent not found, appending map to body as fallback.");
-                        document.body.appendChild(mapContainer);
-                    }
-
-                    mapContainer.classList.remove('fullscreen');
-                    mapModalOverlay.classList.remove('active');
-                    toggleBtn.textContent = '⛶ Fullscreen';
-
-                    // Restore all original inline styles
-                    const originalInlineStyles = JSON.parse(mapContainer.dataset.originalInlineStyles || '{}');
-                    Object.keys(originalInlineStyles).forEach(prop => {
-                        mapContainer.style[prop] = originalInlineStyles[prop];
-                    });
-
-                    setTimeout(() => {
-                        if (map) map.invalidateSize();
-                    }, 300);
-                }
-            });
-
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && mapModalOverlay.classList.contains('active')) {
-                    toggleBtn.click();
-                }
-            });
+            // Add the listeners
+            toggleBtn.addEventListener('click', toggleFullscreenHandler);
+            document.addEventListener('keydown', escapeKeyHandler);
         }
     }
 
@@ -144,6 +153,7 @@ $(document).ready(function() {
                             .bindPopup('ما اینجاییم')
                             .openPopup();
 
+                        // Ensure fullscreen button setup is called every time the map is (re)initialized
                         setupFullscreenButton();
                     }
                     setTimeout(() => {
