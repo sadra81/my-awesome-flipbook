@@ -294,8 +294,8 @@ body {
     /* REMOVED !important to fix mobile fullscreen map size */
     width: 160px; /* Smaller width for minimized mobile map */
     height: 120px; /* Smaller height for minimized mobile map */
-    bottom: 20px; /* Keep it off the very bottom edge */
-    right: 50%; /* Center horizontally */
+    bottom: 20%; /* Keep it off the very bottom edge */
+    right: 20%; /* Center horizontally */
     /*transform: translateX(50%); /* Correct centering for absolute positioned elements */
   }
 
@@ -355,8 +355,8 @@ body {
   width: 250px; /* Small default width */
   height: 180px; /* Small default height */
   position: absolute; /* Position relative to .page-inner */
-  bottom: 20px; /* Distance from bottom */
-  right: 20px; /* Distance from right */
+  bottom: 10%; /* Distance from bottom */
+  right: 30%; /* Distance from right */
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
