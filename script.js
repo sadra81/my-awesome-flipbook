@@ -1,7 +1,10 @@
 $(document).ready(function() {
+    // Select the flipbook container element
     const flipbookElement = document.getElementById('flipbook');
+    // Select the magazine viewport element, ensuring it's a jQuery object
     const $magazineViewport = $('.magazine-viewport');
 
+    // Ensure jQuery is loaded before initializing Turn.js
     if (typeof jQuery === 'undefined') {
         console.error("jQuery is not loaded. Turn.js requires jQuery to function correctly.");
         return;
@@ -16,26 +19,29 @@ $(document).ready(function() {
     const originalMapParent = mapContainer.parentNode;
 
     $(flipbookElement).turn({
-        width: 800,
-        height: 500,
-        autoCenter: true,
-        gradients: true,
-        acceleration: true,
-        display: (window.innerWidth <= 768 && window.innerHeight > window.innerWidth) ? 'single' : 'double',
-        elevation: 50,
+        width: 800, // Default width (will be adjusted by resize)
+        height: 500, // Default height (will be adjusted by resize)
+        autoCenter: true, // Centers the book horizontally
+        gradients: true, // Enables realistic page shadows
+        acceleration: true, // Improves performance on some devices
+        display: (window.innerWidth <= 768 && window.innerHeight > window.innerWidth) ? 'single' : 'double', // 'single' or 'double' page display
+        elevation: 50, // Shadow depth
         direction: 'rtl',
         when: {
             turning: function(event, page, view) {
-                // If turning away from the map page (Page 2), destroy the map to prevent issues
-                if (map && (page !== 2 && page !== 3)) { // Page 2 is the map page, 3 is its back side in double page view
+                // If turning away from the map page (Page 3 or 4 in a spread), destroy the map to prevent issues
+                // This condition means: if the *next* page ('page' parameter) is NOT 3 AND NOT 4, then destroy the map.
+                // This allows the map to persist when flipping between 3 and 4, or 4 to 3.
+                if (map && (page !== 3 && page !== 4)) {
                     map.remove();
-                    map = null;
+                    map = null; // Clear the map object
                 }
             },
             turned: function(event, page, view) {
-                // Initialize map only when it's on page 2 (the "به نام خدا" page)
-                if (page === 2) {
-                    if (!map) {
+                // Initialize map when page 2 OR page 3 becomes active.
+                // This covers cases for single page (page 3) and double page spreads (page 2 & 3).
+                if (page === 2 || page === 3) {
+                    if (!map) { // Only initialize if map doesn't exist
                         const lat = 35.7219;
                         const lng = 51.3890;
                         const zoom = 13;
@@ -52,8 +58,9 @@ $(document).ready(function() {
                             .openPopup();
                     }
                     // Invalidate size after the page has fully turned and rendered
+                    // A small delay ensures the DOM has settled and map container has its final size.
                     setTimeout(() => {
-                        if (map) {
+                        if (map) { // Check if map object still exists
                             map.invalidateSize();
                         }
                     }, 200);
@@ -64,7 +71,7 @@ $(document).ready(function() {
 
     // Snapshot zoom and pan logic (your existing code, mostly unchanged)
     let isZoomed = false;
-    let zoomLevel = 2;
+    let zoomLevel = 2; // Adjust zoom level as needed
     let isDragging = false;
     let lastX = 0;
     let lastY = 0;
@@ -136,27 +143,77 @@ $(document).ready(function() {
         let newWidth, newHeight;
 
         if (isMobilePortrait) {
-            newWidth = containerWidth * 0.95;
-            newHeight = containerHeight * 0.85;
-        } else {
-            newWidth = containerWidth * 0.6;
-            newHeight = newWidth / 1.6;
-            if (newHeight > containerHeight * 0.8) {
-                newHeight = containerHeight * 0.8;
-                newWidth = newHeight * 1.6;
-            }
-        }
+            // For mobile portrait: single page, portrait aspect ratio (e.g., 3:4)
+            const mobilePortraitAspectRatio = 0.75; // width / height = 3 / 4
 
-        $magazineViewport.css({
-            width: newWidth + 'px',
-            height: newHeight + 'px'
-        });
+            // Aim to fill almost the entire height, then calculate width
+            newHeight = containerHeight * 0.98; // Use 98% of screen height for near-fullscreen
+            newWidth = newHeight * mobilePortraitAspectRatio;
+
+            // If calculated width is too large for the screen, adjust
+            if (newWidth > containerWidth * 0.98) { // Use 98% of screen width
+                newWidth = containerWidth * 0.98;
+                newHeight = newWidth / mobilePortraitAspectRatio;
+            }
+
+            // Ensure minimum size (adjust as needed, but keep it low for responsiveness)
+            if (newWidth < 250) {
+                newWidth = 250;
+                newHeight = newWidth / mobilePortraitAspectRatio;
+            }
+
+            // Adjust magazine-viewport to center and take up appropriate space
+            $magazineViewport.css({
+                width: newWidth,
+                height: newHeight,
+                'max-width': '100%',
+                'max-height': '100%',
+                'margin': 'auto' // Center it
+            });
+
+        } else {
+            // For desktop or landscape mobile/tablet: double page, wider aspect ratio (e.g., 8:5)
+            const desktopAspectRatio = 1.6; // width / height = 800 / 500
+
+            // Aim to fill almost the entire width, then calculate height
+            newWidth = containerWidth * 0.95; // Use 95% of screen width (leave minimal padding)
+            newHeight = newWidth / desktopAspectRatio;
+
+            // Adjust if height exceeds container height
+            if (newHeight > containerHeight * 0.95) { // Use 95% of screen height
+                newHeight = containerHeight * 0.95;
+                newWidth = newHeight * desktopAspectRatio;
+            }
+
+            // Ensure minimum size (adjust as needed)
+            if (newWidth < 600) {
+                newWidth = 600;
+                newHeight = newWidth / desktopAspectRatio;
+            }
+
+            $magazineViewport.css({
+                width: newWidth,
+                height: newHeight,
+                'max-width': '100%', // Ensure it doesn't break out
+                'max-height': '100%', // Ensure it doesn't break out
+                'margin': 'auto' // Center it
+            });
+        }
 
         $(flipbookElement).turn('size', newWidth, newHeight);
 
+        // Update display mode based on current orientation
+        const flipbook = $(flipbookElement);
+        const currentDisplay = flipbook.turn('option', 'display');
+        const shouldBeSingle = isMobilePortrait ? 'single' : 'double';
+
+        if (currentDisplay !== shouldBeSingle) {
+            flipbook.turn('display', shouldBeSingle);
+        }
+
         // If the map is currently on display or in modal, invalidate its size after resize
         const currentPage = $(flipbookElement).turn('page');
-        if (map && (currentPage === 2 || currentPage === 3 || mapModalOverlay.classList.contains('active'))) {
+        if (map && (currentPage === 3 || currentPage === 4 || mapModalOverlay.classList.contains('active'))) {
             setTimeout(() => {
                 if (map) {
                     map.invalidateSize();
