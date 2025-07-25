@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Flipbook</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+  <div class="magazine-viewport" id="magazine-viewport">
+    <div id="zoom-container">
+      <div id="flipbook">
+        <div class="page cover-page">
+          <div class="page-inner">
+            <img src="Pictures/Picture2.png" class="icon cover-icon">
+            <div class="cover-title">مجله‌ی دیجیتال</div>
+            <div class="cover-subtitle">بازسازی شماره‌ی 68</div>
+          </div>
+        </div>
+      <div class="page page-1-bg">
+          <div class="page-inner page-1-layout">
+            <div class="page1-text slide-in-right">به نام<br>خداوند<br>مهربان</div>
+            <img src="Pictures/Picture12.png" class="page1-icon1">
+          </div>
+        </div>
+      <div class="page page-bg">
+          <div class="page-inner page-2-layout">
+            <img src="Pictures/Picture11.png" class="page2-icon1">
+            <div class="map-container" id="map-container">
+              <div id="map"></div>
+              <div class="map-controls">
+                  <button id="toggle-map-size" class="map-toggle-btn">⛶ Fullscreen</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="page page-bg" style="background-image: url('Picture3.jpg')">
+          <div class="page-inner page-content-center">
+            <h3>Page 3</h3>
+            <p>Content goes here.</p>
+          </div>
+        </div>
+
+        <div class="page page-bg" style="background-image: url('Picture3.jpg')">
+          <div class="page-inner page-content-center">
+            <h3>Page 4</h3>
+            <img src="https://via.placeholder.com/300x200/90EE90/000000?text=Image+2" alt="Placeholder Image 2" class="page-image" />
+          </div>
+        </div>
+
+        <div class="page cover-page back-cover-page page-content-center">
+          <div class="page-inner">
+            <h2>Thank You!</h2>
+            <p>This is the back cover.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="map-modal-overlay" class="map-modal-overlay">
+    </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script type="text/javascript" src="jquery.min.js"></script>
+  <script type="text/javascript" src="turn.min.js"></script>
+  <script type="text/javascript" src="scissor.js"></script>
+  <script type="text/javascript" src="zoom.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
